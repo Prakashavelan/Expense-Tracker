@@ -660,6 +660,11 @@
         <header>
             <h1> Expense Tracker</h1>
             <p>Smart money management made simple</p>
+            <button class="btn-delete" onclick="logout()"
+             style="position:absolute; top:20px; right:30px;">
+    Logout
+</button>
+
         </header>
 
         <div class="add-balance-section">
@@ -769,217 +774,303 @@
 
 
     <script>
-        let transactions = [];
+    /**********************************************************
+     ✅ STEP 0: Authentication Check (Force Login)
+    **********************************************************/
+    if (!localStorage.getItem("token")) {
+        window.location.href = "login.html";
+    }
 
-        
-        const API_URL = "https://expense-tracker-backend-5eoz.onrender.com/api/transactions";
+    /**********************************************************
+     ✅ STEP 1: API URL (Render Backend)
+    **********************************************************/
+    const API_URL =
+        "https://expense-tracker-backend-5eoz.onrender.com/api/transactions";
 
-        async function loadData() {
-                const res = await fetch(API_URL);
-                transactions = await res.json();
-            }
+    let transactions = [];
 
+    /**********************************************************
+     ✅ STEP 2: Helper Function – Send JWT Token Always
+    **********************************************************/
+    function authHeaders() {
+        return {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        };
+    }
 
-        async function addIncome() {
-            const amountInput = document.getElementById('incomeAmount');
-            const descriptionInput = document.getElementById('incomeDescription');
-            const amount = parseFloat(amountInput.value);
-            const description = descriptionInput.value || 'Income added';
-
-            if (!amount || amount <= 0) {
-                alert('Please enter a valid amount');
-                return;
-            }
-
-            const income = {
-                id: Date.now(),
-                description: description,
-                amount: amount,
-                category: 'income',
-                type: 'income',
-                date: new Date().toISOString().split('T')[0]
-            };
-          
-            await fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(income)
-                });
-
-                await loadData();
-            
-            updateUI();
-
-            amountInput.value = '';
-            descriptionInput.value = '';
-        }
-
-        async function addExpense() {
-            const descriptionInput = document.getElementById('description');
-            const amountInput = document.getElementById('amount');
-            const categoryInput = document.getElementById('category');
-            const dateInput = document.getElementById('date');
-
-            const amount = parseFloat(amountInput.value);
-            const description = descriptionInput.value.trim();
-            const category = categoryInput.value;
-            const date = dateInput.value;
-
-            if (!description) {
-                alert('Please enter a description');
-                return;
-            }
-
-            if (!amount || amount <= 0) {
-                alert('Please enter a valid amount');
-                return;
-            }
-
-            if (!date) {
-                alert('Please select a date');
-                return;
-            }
-
-            const expense = {
-                id: Date.now(),
-                description: description,
-                amount: amount,
-                category: category,
-                type: 'expense',
-                date: date
-            };
-
-           await fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(expense)
-                });
-
-            await loadData();
-            updateUI();
-
-            descriptionInput.value = '';
-            amountInput.value = '';
-            dateInput.valueAsDate = new Date();
-        }
-
-        let deleteId = null;
-
-        function deleteTransaction(id) {
-            deleteId = id;
-            document.getElementById("confirmModal").style.display = "flex";
-        }
-
-        document.getElementById("confirmOk").addEventListener("click", confirmDelete);
-        async function confirmDelete() {
-            await fetch(`${API_URL}/${deleteId}`, {
-                method: "DELETE"
+    /**********************************************************
+     ✅ STEP 3: Load Transactions From Backend (GET)
+    **********************************************************/
+    async function loadData() {
+        try {
+            const res = await fetch(API_URL, {
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token")
+                }
             });
 
-            await loadData();
-            updateUI();
-            closeModal();
-        }
-
-          
-        document.getElementById("confirmCancel").addEventListener("click", closeModal);
-
-        function closeModal() {
-            document.getElementById("confirmModal").style.display = "none";
-            deleteId = null;
-        }
-
-
-        function updateUI() {
-            const filterCategory = document.getElementById('filterCategory').value;
-            let filteredTransactions = transactions;
-
-            if (filterCategory !== 'all') {
-                filteredTransactions = transactions.filter(t => t.category === filterCategory);
+            if (!res.ok) {
+                throw new Error("Unable to load transactions. Please login again.");
             }
 
-            const totalIncome = transactions
-                .filter(t => t.type === 'income')
-                .reduce((sum, t) => sum + t.amount, 0);
+            transactions = await res.json();
+        } catch (err) {
+            alert("Session expired. Please login again.");
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        }
+    }
 
-            const totalExpenses = transactions
-                .filter(t => t.type === 'expense')
-                .reduce((sum, t) => sum + t.amount, 0);
+    /**********************************************************
+     ✅ STEP 4: Add Income (POST)
+    **********************************************************/
+    async function addIncome() {
+        const amountInput = document.getElementById("incomeAmount");
+        const descriptionInput = document.getElementById("incomeDescription");
 
-            const currentBalance = totalIncome - totalExpenses;
+        const amount = parseFloat(amountInput.value);
+        const description = descriptionInput.value || "Income added";
 
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
-            const monthExpenses = transactions
-                .filter(t => {
-                    const tDate = new Date(t.date);
-                    return t.type === 'expense' &&
-                        tDate.getMonth() === currentMonth &&
-                        tDate.getFullYear() === currentYear;
-                })
-                .reduce((sum, t) => sum + t.amount, 0);
+        if (!amount || amount <= 0) {
+            alert("Please enter a valid amount");
+            return;
+        }
 
-            const balanceEl = document.getElementById('totalBalance');
-            const incomeEl = document.getElementById('totalIncome');
-            const expensesEl = document.getElementById('totalExpenses');
-            const monthEl = document.getElementById('monthExpenses');
+        const income = {
+            description: description,
+            amount: amount,
+            category: "income",
+            type: "income",
+            date: new Date().toISOString().split("T")[0]
+        };
 
-            balanceEl.textContent = '₹' + currentBalance.toFixed(2);
-            incomeEl.textContent = '₹' + totalIncome.toFixed(2);
-            expensesEl.textContent = '₹' + totalExpenses.toFixed(2);
-            monthEl.textContent = '₹' + monthExpenses.toFixed(2);
+        await fetch(API_URL, {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify(income)
+        });
 
-            balanceEl.classList.add('updated');
-            setTimeout(() => balanceEl.classList.remove('updated'), 500);
+        await loadData();
+        updateUI();
 
-            if (currentBalance >= 0) {
-                balanceEl.style.background = 'linear-gradient(135deg, #51cf66, #37b24d)';
-                balanceEl.style.webkitBackgroundClip = 'text';
-                balanceEl.style.webkitTextFillColor = 'transparent';
-            } else {
-                balanceEl.style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a6f)';
-                balanceEl.style.webkitBackgroundClip = 'text';
-                balanceEl.style.webkitTextFillColor = 'transparent';
+        amountInput.value = "";
+        descriptionInput.value = "";
+    }
+
+    /**********************************************************
+     ✅ STEP 5: Add Expense (POST)
+    **********************************************************/
+    async function addExpense() {
+        const descriptionInput = document.getElementById("description");
+        const amountInput = document.getElementById("amount");
+        const categoryInput = document.getElementById("category");
+        const dateInput = document.getElementById("date");
+
+        const amount = parseFloat(amountInput.value);
+        const description = descriptionInput.value.trim();
+        const category = categoryInput.value;
+        const date = dateInput.value;
+
+        if (!description) {
+            alert("Please enter a description");
+            return;
+        }
+
+        if (!amount || amount <= 0) {
+            alert("Please enter a valid amount");
+            return;
+        }
+
+        if (!date) {
+            alert("Please select a date");
+            return;
+        }
+
+        const expense = {
+            description: description,
+            amount: amount,
+            category: category,
+            type: "expense",
+            date: date
+        };
+
+        await fetch(API_URL, {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify(expense)
+        });
+
+        await loadData();
+        updateUI();
+
+        descriptionInput.value = "";
+        amountInput.value = "";
+        dateInput.valueAsDate = new Date();
+    }
+
+    /**********************************************************
+     ✅ STEP 6: Delete Transaction (DELETE)
+    **********************************************************/
+    let deleteId = null;
+
+    function deleteTransaction(id) {
+        deleteId = id;
+        document.getElementById("confirmModal").style.display = "flex";
+    }
+
+    async function confirmDelete() {
+        await fetch(`${API_URL}/${deleteId}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
+        });
 
-            const expensesList = document.getElementById('expensesList');
+        await loadData();
+        updateUI();
+        closeModal();
+    }
 
-            if (filteredTransactions.length === 0) {
-                expensesList.innerHTML = `
-                        <div class="empty-state">
-                            <p>✨ No transactions found for this filter.</p>
-                        </div>
-                    `;
-                return;
-            }
+    document
+        .getElementById("confirmOk")
+        .addEventListener("click", confirmDelete);
 
-            expensesList.innerHTML = filteredTransactions.map(transaction => `
-                    <div class="expense-item">
-                        <div class="expense-description">${transaction.description}</div>
-                        <div class="${transaction.type === 'income' ? 'income-amount' : 'expense-amount'}">
-                            ${transaction.type === 'income' ? '+' : '-'}₹${transaction.amount.toFixed(2)}
-                        </div>
-                        <span class="expense-category category-${transaction.category}">${transaction.category}</span>
-                        <div class="expense-date">${new Date(transaction.date).toLocaleDateString()}</div>
-                        <button class="btn-delete" onclick="deleteTransaction(${transaction.id})">Delete</button>
-                    </div>
-                `).join('');
+    document
+        .getElementById("confirmCancel")
+        .addEventListener("click", closeModal);
+
+    function closeModal() {
+        document.getElementById("confirmModal").style.display = "none";
+        deleteId = null;
+    }
+
+    /**********************************************************
+     ✅ STEP 7: Update UI Rendering
+    **********************************************************/
+    function updateUI() {
+        const filterCategory = document.getElementById("filterCategory").value;
+        let filteredTransactions = transactions;
+
+        if (filterCategory !== "all") {
+            filteredTransactions = transactions.filter(
+                (t) => t.category === filterCategory
+            );
         }
 
-        async function init() {
-            await loadData();
-            document.getElementById('date').valueAsDate = new Date();
-            document.getElementById('addIncomeBtn').addEventListener('click', addIncome);
-            document.getElementById('addExpenseBtn').addEventListener('click', addExpense);
-            document.getElementById('filterCategory').addEventListener('change', updateUI);
-            updateUI();
+        const totalIncome = transactions
+            .filter((t) => t.type === "income")
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        const totalExpenses = transactions
+            .filter((t) => t.type === "expense")
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        const currentBalance = totalIncome - totalExpenses;
+
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+
+        const monthExpenses = transactions
+            .filter((t) => {
+                const tDate = new Date(t.date);
+                return (
+                    t.type === "expense" &&
+                    tDate.getMonth() === currentMonth &&
+                    tDate.getFullYear() === currentYear
+                );
+            })
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        document.getElementById("totalBalance").textContent =
+            "₹" + currentBalance.toFixed(2);
+
+        document.getElementById("totalIncome").textContent =
+            "₹" + totalIncome.toFixed(2);
+
+        document.getElementById("totalExpenses").textContent =
+            "₹" + totalExpenses.toFixed(2);
+
+        document.getElementById("monthExpenses").textContent =
+            "₹" + monthExpenses.toFixed(2);
+
+        const expensesList = document.getElementById("expensesList");
+
+        if (filteredTransactions.length === 0) {
+            expensesList.innerHTML = `
+                <div class="empty-state">
+                    <p>No transactions found.</p>
+                </div>`;
+            return;
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
-    </script>
+        expensesList.innerHTML = filteredTransactions
+            .map(
+                (transaction) => `
+            <div class="expense-item">
+                <div class="expense-description">${transaction.description}</div>
+
+                <div class="${
+                    transaction.type === "income"
+                        ? "income-amount"
+                        : "expense-amount"
+                }">
+                    ${
+                        transaction.type === "income" ? "+" : "-"
+                    }₹${transaction.amount.toFixed(2)}
+                </div>
+
+                <span class="expense-category category-${transaction.category}">
+                    ${transaction.category}
+                </span>
+
+                <div class="expense-date">
+                    ${new Date(transaction.date).toLocaleDateString()}
+                </div>
+
+                <button class="btn-delete"
+                    onclick="deleteTransaction('${transaction._id}')">
+                    Delete
+                </button>
+            </div>
+        `
+            )
+            .join("");
+    }
+
+    /**********************************************************
+     ✅ STEP 8: Logout
+    **********************************************************/
+    function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "login.html";
+    }
+
+    /**********************************************************
+     ✅ STEP 9: Initialize App
+    **********************************************************/
+    async function init() {
+        await loadData();
+
+        document.getElementById("date").valueAsDate = new Date();
+
+        document
+            .getElementById("addIncomeBtn")
+            .addEventListener("click", addIncome);
+
+        document
+            .getElementById("addExpenseBtn")
+            .addEventListener("click", addExpense);
+
+        document
+            .getElementById("filterCategory")
+            .addEventListener("change", updateUI);
+
+        updateUI();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+</script>
+
 </body>
 </html>

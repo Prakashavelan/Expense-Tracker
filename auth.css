@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: #0f0f23;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  overflow: hidden;
+}
+
+/* Background Glow */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 40%, rgba(120, 119, 198, 0.35), transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.35), transparent 55%);
+  z-index: -1;
+}
+
+.auth-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 420px;
+  padding: 45px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.auth-card h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #a0a0c0;
+  margin: 12px 0 30px;
+  font-size: 1rem;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  margin-bottom: 18px;
+}
+
+.input-group input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  color: white;
+  font-size: 1rem;
+}
+
+.input-group input::placeholder {
+  color: #6b6b8c;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0 25px;
+  font-size: 0.9rem;
+}
+
+.checkbox {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.link {
+  color: #a78bfa;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+}
+
+.bottom-text {
+  margin-top: 22px;
+  color: #cfcfe8;
+}
+
+.bottom-text a {
+  color: #a78bfa;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bottom-text a:hover {
+  text-decoration: underline;
+}
