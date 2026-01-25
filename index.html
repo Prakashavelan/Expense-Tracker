@@ -31,7 +31,7 @@
             background: 
                 radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.3), transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.2), transparent 50%);
+                radial-gradient(circle at 40% 20%, rgba(59, 130, 24b6, 0.2), transparent 50%);
             z-index: 0;
             animation: gradientShift 15s ease infinite;
         }
@@ -771,18 +771,16 @@
     <script>
         let transactions = [];
 
-        function loadData() {
-            const saved = localStorage.getItem('transactions');
-            if (saved) {
-                transactions = JSON.parse(saved);
+        
+        const API_URL = "https://expense-tracker-backend-5eoz.onrender.com/api/transactions";
+
+        async function loadData() {
+                const res = await fetch(API_URL);
+                transactions = await res.json();
             }
-        }
 
-        function saveTransactions() {
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-        }
 
-        function addIncome() {
+        async function addIncome() {
             const amountInput = document.getElementById('incomeAmount');
             const descriptionInput = document.getElementById('incomeDescription');
             const amount = parseFloat(amountInput.value);
@@ -801,16 +799,22 @@
                 type: 'income',
                 date: new Date().toISOString().split('T')[0]
             };
+          
+            await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(income)
+                });
 
-            transactions.unshift(income);
-            saveTransactions();
+                await loadData();
+            
             updateUI();
 
             amountInput.value = '';
             descriptionInput.value = '';
         }
 
-        function addExpense() {
+        async function addExpense() {
             const descriptionInput = document.getElementById('description');
             const amountInput = document.getElementById('amount');
             const categoryInput = document.getElementById('category');
@@ -845,8 +849,13 @@
                 date: date
             };
 
-            transactions.unshift(expense);
-            saveTransactions();
+           await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(expense)
+                });
+
+            await loadData();
             updateUI();
 
             descriptionInput.value = '';
@@ -861,13 +870,18 @@
             document.getElementById("confirmModal").style.display = "flex";
         }
 
-        document.getElementById("confirmOk").addEventListener("click", function () {
-            transactions = transactions.filter(t => t.id !== deleteId);
-            saveTransactions();
+        document.getElementById("confirmOk").addEventListener("click", confirmDelete);
+        async function confirmDelete() {
+            await fetch(`${API_URL}/${deleteId}`, {
+                method: "DELETE"
+            });
+
+            await loadData();
             updateUI();
             closeModal();
-        });
+        }
 
+          
         document.getElementById("confirmCancel").addEventListener("click", closeModal);
 
         function closeModal() {
@@ -952,8 +966,8 @@
                 `).join('');
         }
 
-        function init() {
-            loadData();
+        async function init() {
+            await loadData();
             document.getElementById('date').valueAsDate = new Date();
             document.getElementById('addIncomeBtn').addEventListener('click', addIncome);
             document.getElementById('addExpenseBtn').addEventListener('click', addExpense);
