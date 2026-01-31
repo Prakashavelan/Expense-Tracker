@@ -17,14 +17,12 @@ async function loginUser(event) {
 
   if (data.token) {
     localStorage.setItem("token", data.token);
-    showDialog("Success ✅", "Login Successful!");
-
+    showModal("Success", "Login Successful!");
     setTimeout(() => {
       window.location.href = "index.html";
-    }, 1500);
-    
+      }, 1500);
   } else {
-    showDialog(data.msg || "Login Failed!");
+    showModal("Failed","Invalid Credentials!");
   }
 }
 
@@ -45,10 +43,10 @@ async function registerUser(event) {
   const data = await res.json();
 
   if (data.msg || data.errors === undefined) {
-    showDialog("Signup Successful! Please login.");
+    showModal("Signup Successful! Please login.");
     window.location.href = "login.html";
   } else {
-    showDialog("Signup Failed!");
+    showModal("Signup Failed!");
   }
 }
 

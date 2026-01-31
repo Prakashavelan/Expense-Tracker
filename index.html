@@ -652,20 +652,34 @@
                     cursor: not-allowed;
                 }
 
+                .header-top {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+
+                    .btn-delete {
+                        padding: 8px 20px;
+                        border: none;
+                        border-radius: 20px;
+                        background: red;
+                        color: white;
+                        cursor: pointer;
+                    }
+
+
 
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1> Expense Tracker</h1>
-            <p>Smart money management made simple</p>
-            <button class="btn-delete" onclick="logout()"
-             style="position:absolute; top:20px; right:30px;">
-    Logout
-</button>
-
+            <div class="header-top">
+                <h1>Expense Tracker</h1>
+                <button class="btn-delete">Logout</button>
+            </div>
         </header>
+
 
         <div class="add-balance-section">
             <h3>💵 Add Money to Balance</h3>
