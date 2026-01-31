@@ -1,4 +1,4 @@
-const API_BASE = "https://expense-tracker-backend-5eoz.onrender.com/api";
+const API_BASE = "https://expense-tracker-backend-5eoz.onrender.com/api"; //render api
 
 /* ✅ LOGIN */
 async function loginUser(event) {
@@ -17,11 +17,14 @@ async function loginUser(event) {
 
   if (data.token) {
     localStorage.setItem("token", data.token);
+    showDialog("Success ✅", "Login Successful!");
 
-    alert("Login Successful!");
-    window.location.href = "index.html";
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 1500);
+    
   } else {
-    alert(data.msg || "Login Failed!");
+    showDialog(data.msg || "Login Failed!");
   }
 }
 
@@ -42,9 +45,27 @@ async function registerUser(event) {
   const data = await res.json();
 
   if (data.msg || data.errors === undefined) {
-    alert("Signup Successful! Please login.");
+    showDialog("Signup Successful! Please login.");
     window.location.href = "login.html";
   } else {
-    alert("Signup Failed!");
+    showDialog("Signup Failed!");
   }
+}
+
+function togglePassword() {
+  const field = document.getElementById("password");
+
+  field.type = field.type === "password" ? "text" : "password";
+}
+
+/* ✅ Premium Modal Functions */
+function showModal(title, message) {
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("modalText").innerText = message;
+
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
 }

@@ -11,23 +11,21 @@
   <div class="auth-wrapper">
     <div class="auth-card">
 
-      <h1>Sign Up</h1>
+      <h2>Sign Up</h2>
       <p class="subtitle">Create a new account to get started.</p>
 
       <form onsubmit="registerUser(event)">
         <div class="input-group">
-          <span>👤</span>
           <input type="text" id="name" placeholder="Name" required />
         </div>
 
         <div class="input-group">
-          <span>📧</span>
           <input type="email" id="signupEmail" placeholder="Email" required />
         </div>
 
-        <div class="input-group">
-          <span>🔒</span>
+       <div class="input-group password-group">
           <input type="password" id="signupPassword" placeholder="Password" required />
+          <span class="toggle-password" onclick="togglePassword()">👁</span>
         </div>
 
         <button class="btn-primary" type="submit">
@@ -42,7 +40,18 @@
 
     </div>
   </div>
+  
 
   <script src="auth.js"></script>
+
+  <!-- ✅ Premium Dialog Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h3 id="modalTitle"></h3>
+      <p id="modalText"></p>
+      <button class="modal-btn" onclick="closeModal()">OK</button>
+    </div>
+</div>
+
 </body>
 </html>

@@ -6,25 +6,29 @@
 
 body {
   font-family: "Inter", sans-serif;
-  background: #0f0f23;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
+
+  /* ✅ Background image */
+  background: url("images/bg.jpg") no-repeat center center/cover;
+
   overflow: hidden;
 }
 
-/* Background Glow */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(circle at 20% 40%, rgba(120, 119, 198, 0.35), transparent 55%),
-    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.35), transparent 55%);
+
+  background: rgba(15, 15, 35, 0.85);
+
   z-index: -1;
 }
+
+
 
 .auth-wrapper {
   width: 100%;
@@ -33,15 +37,13 @@ body::before {
 }
 
 .auth-card {
-  width: 420px;
-  padding: 45px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.6);
-  text-align: center;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
 }
+
 
 .auth-card h1 {
   font-size: 2.4rem;
@@ -53,6 +55,13 @@ body::before {
   margin: 12px 0 30px;
   font-size: 1rem;
 }
+
+input:-webkit-autofill {
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-clip: text !important;
+}
+
 
 .input-group {
   display: flex;
@@ -133,3 +142,115 @@ body::before {
 .bottom-text a:hover {
   text-decoration: underline;
 }
+
+input {
+  color-scheme: dark;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+.password-group {
+  position: relative;
+}
+
+.password-group input {
+  width: 100%;
+  padding-right: 45px; /* Space for eye icon */
+}
+
+/* Eye icon INSIDE input */
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  cursor: pointer;
+  font-size: 18px;
+
+  color: white;
+  opacity: 0.7;
+  transition: 0.3s;
+}
+
+.toggle-password:hover {
+  opacity: 1;
+  color: #a78bfa;
+}
+
+/* ✅ Modal Background Overlay */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none; /* ✅ Hidden initially */
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 99999;
+}
+
+/* ✅ Modal Box (Same as Dashboard Glass Theme) */
+.modal-content {
+  width: 360px;
+  padding: 30px;
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 60px rgba(102, 126, 234, 0.35);
+
+  text-align: center;
+  animation: popIn 0.3s ease;
+}
+
+/* ✅ Smooth Animation */
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Title */
+.modal-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: white;
+}
+
+/* Message */
+.modal-content p {
+  font-size: 1rem;
+  color: #cfcfe8;
+  margin-bottom: 20px;
+}
+
+/* ✅ Button Matches Theme */
+.modal-btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  transition: 0.3s;
+}
+
+.modal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+}
+
+
+
