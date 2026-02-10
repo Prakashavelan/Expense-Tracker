@@ -537,6 +537,10 @@
             justify-content: center;
             z-index: 9999;
         }
+        
+        input[type="date"] {
+            color-scheme: dark;
+        }
 
         /* Dark dialog box */
         .modal-box {
@@ -676,13 +680,13 @@
         <header>
             <div class="header-top">
                 <h1>Expense Tracker</h1>
-                <button class="btn-delete">Logout</button>
+                <button class="btn-delete" onclick="logout()">Logout</button>
             </div>
         </header>
 
 
         <div class="add-balance-section">
-            <h3>💵 Add Money to Balance</h3>
+            <h3> Add Money to Balance</h3>
             <div class="balance-form">
                 <div class="form-group" style="flex: 1; min-width: 200px;">
                     <label for="incomeAmount">Amount (₹)</label>

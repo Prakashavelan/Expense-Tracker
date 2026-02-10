@@ -4,6 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up | Expense Tracker</title>
+  <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="auth.css"/>
 </head>
 
@@ -23,10 +25,14 @@
           <input type="email" id="signupEmail" placeholder="Email" required />
         </div>
 
-       <div class="input-group password-group">
+        <div class="input-group password-group">
           <input type="password" id="signupPassword" placeholder="Password" required />
-          <span class="toggle-password" onclick="togglePassword()">👁</span>
-        </div>
+
+          <span class="toggle-password" onclick="togglePassword('signupPassword', this)">
+            <i class="fa-solid fa-eye fa-sm" style="font-weight: inherit;"></i>
+          </span>
+        </div>  
+
 
         <button class="btn-primary" type="submit">
           Sign Up

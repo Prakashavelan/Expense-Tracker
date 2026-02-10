@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login | Expense Tracker</title>
+  <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="auth.css"/>
 </head>
 
@@ -19,11 +21,13 @@
           <input type="email" id="email" placeholder="Email" required />
         </div>
 
-       <div class="input-group password-group">
-          <input type="password" id="password" placeholder="Password" required/>
-          <span class="toggle-password" onclick="togglePassword()">👁</span>
-        </div>
+        <div class="input-group password-group">
+            <input type="password" id="password" placeholder="Password" required />
 
+            <span class="toggle-password" onclick="togglePassword('password', this)">
+              <i class="fa-solid fa-eye fa-sm" style="font-weight: inherit;"></i>
+            </span>
+        </div>
 
         <div class="row">
           <label class="checkbox">
@@ -31,7 +35,7 @@
             Remember Me
           </label>
 
-          <a href="#" class="link">Forgot Password?</a>
+           <a href="forgot-password.html" class="link">Forgot Password?</a>
         </div>
 
         <button class="btn-primary" type="submit">
